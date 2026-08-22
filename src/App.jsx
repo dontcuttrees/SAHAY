@@ -3,6 +3,8 @@ import React from 'react';
 import { IncidentProvider, useIncidents } from './context/IncidentContext';
 import ReportNeedForm from './components/victim/ReportNeedForm';
 import MyReportsList from './components/victim/MyReportsList';
+import ResponderView from './components/responder/ResponderView';
+import IncidentStats from './components/command/IncidentStats';
 import { Radio, ShieldAlert, Activity, Network } from 'lucide-react';
 
 function DashboardShell() {
@@ -10,8 +12,7 @@ function DashboardShell() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Top Header */}
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-3.5 flex items-center justify-between">
+      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur px-6 py-3.5 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-bold text-white shadow-lg shadow-red-900/30">
             <Radio className="w-5 h-5" />
@@ -22,7 +23,6 @@ function DashboardShell() {
           </div>
         </div>
 
-        {/* Global Tab Switcher */}
         <nav className="flex items-center bg-slate-900 border border-slate-800 rounded-lg p-1 gap-1">
           {[
             { id: 'victim', label: 'Victim Log', icon: ShieldAlert },
@@ -49,24 +49,25 @@ function DashboardShell() {
         </nav>
       </header>
 
-      {/* Main Tab Content */}
-      <main className="flex-1 max-w-5xl w-full mx-auto p-6">
+      <main className="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6">
         {activeTab === 'victim' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ReportNeedForm />
             <MyReportsList />
           </div>
         )}
-        {activeTab === 'responder' && (
-          <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center text-slate-500 text-sm">
-            Responder View (Scheduled for Hour 1)
-          </div>
-        )}
+        
+        {activeTab === 'responder' && <ResponderView />}
+        
         {activeTab === 'command' && (
-          <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center text-slate-500 text-sm">
-            Command Center & Map View (Scheduled for Hour 2)
+          <div className="space-y-6">
+            <IncidentStats />
+            <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center text-slate-500 text-sm">
+              Leaflet Map & Priority List (Scheduled for Hour 2)
+            </div>
           </div>
         )}
+
         {activeTab === 'network' && (
           <div className="p-8 border border-dashed border-slate-800 rounded-xl text-center text-slate-500 text-sm">
             Network Hop Graph (Scheduled for Hour 3)
