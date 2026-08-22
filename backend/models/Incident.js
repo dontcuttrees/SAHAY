@@ -17,7 +17,7 @@ const incidentSchema = new mongoose.Schema(
                 "Water",
                 "Food",
                 "Shelter",
-                "Missing Persons"
+                "Missing Person"
             ]
         },
 

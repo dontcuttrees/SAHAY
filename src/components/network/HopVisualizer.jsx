@@ -61,15 +61,52 @@ export default function HopVisualizer() {
     }, 3000);
 
     // Hop 2 -> Hop 3 (C -> Server)
-    setTimeout(() => {
-      setCurrentHopIndex(3);
-      setIsRelaying(false);
-      updateIncidentStatus(targetIncident.id, 'Synced');
-      setRelayLogs((prev) => [
-        `[${new Date().toLocaleTimeString()}] Uplink Established: ${INITIAL_NODES[2].id} synced payload with ${INITIAL_NODES[3].id} (Database Persisted)`,
-        ...prev
-      ]);
-    }, 4500);
+    setTimeout(async () => {
+  setCurrentHopIndex(3);
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/incidents/${targetIncident.id}/status`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: 'Synced',
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Sync failed');
+    }
+
+    setIsRelaying(false);
+
+    // Update frontend only after MongoDB confirms the sync
+    updateIncidentStatus(targetIncident.id, 'Synced');
+
+    setRelayLogs((prev) => [
+      `[${new Date().toLocaleTimeString()}] Uplink Established: ${INITIAL_NODES[2].id} synced payload with ${INITIAL_NODES[3].id} (Database Persisted)`,
+      ...prev
+    ]);
+
+    console.log('Incident synced successfully:', data.incident);
+
+  } catch (error) {
+    setIsRelaying(false);
+
+    setRelayLogs((prev) => [
+      `[${new Date().toLocaleTimeString()}] Uplink FAILED: ${error.message}`,
+      ...prev
+    ]);
+
+    console.error('Incident sync failed:', error);
+  }
+}, 4500);
   };
 
   const resetSimulation = () => {
