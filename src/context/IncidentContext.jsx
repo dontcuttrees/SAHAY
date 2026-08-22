@@ -1,6 +1,6 @@
 // src/context/IncidentContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
+import { enqueueIncident } from '../services/storeAndForwardService';
 const IncidentContext = createContext();
 
 const API_BASE_URL = 'http://localhost:5000/api/incidents';
@@ -85,40 +85,23 @@ export function IncidentProvider({ children }) {
   // 2. Add New Incident from Report Form (POST)
   // Find addIncident in src/context/IncidentContext.jsx and update payload:
 
-const addIncident = async (newReport) => {
+const addIncident = (newReport) => {
+  const incidentId = `INC-${Math.floor(1000 + Math.random() * 9000)}`;
+
   const payload = {
     ...newReport,
-    originNode: 'NODE-A', // Required by backend schema (Field Victim Node)
-    id: `INC-${Math.floor(1000 + Math.random() * 9000)}`,
+    incidentId,
+    id: incidentId,
+    originNode: 'NODE-A',
     status: 'Pending Sync',
-    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    currentNode: 'NODE-A',
+    relayHistory: ['NODE-A'],
+    timestamp: new Date().toISOString(),
   };
 
-  // Optimistically update local UI immediately
   setIncidents((prev) => [payload, ...prev]);
 
-  try {
-    const response = await fetch(API_BASE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (response.ok) {
-      const savedData = await response.json();
-      setIncidents((prev) =>
-        prev.map((inc) =>
-          inc.id === payload.id
-            ? { ...inc, status: 'Synced', ...(savedData._id || savedData.id ? { id: savedData.id || savedData._id } : {}) }
-            : inc
-        )
-      );
-      setIsOnline(true);
-    }
-  } catch (err) {
-    console.warn('POST failed, item saved locally with Pending Sync:', err.message);
-    setIsOnline(false);
-  }
+  enqueueIncident(payload);
 };
 
   // 3. Update Incident Status / Responders (PATCH/PUT)
