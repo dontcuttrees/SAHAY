@@ -1,6 +1,9 @@
 # SAHAY: Decentralized Offline Humanitarian Coordination Platform
 
-SAHAY (RELIEF-MESH) is an offline-first, delay-tolerant humanitarian relief management platform designed for the critical first 72 hours following severe natural disasters or infrastructure collapse. When telecommunications and power grids are severed, SAHAY enables decentralized incident reporting, hop-by-hop store-and-forward peer relay across field units, and central triage mapping once an uplink is established.
+SAHAY is an offline-first, delay-tolerant humanitarian relief management platform designed for the critical first 72 hours following severe natural disasters or infrastructure collapse. When telecommunications and power grids are severed, SAHAY enables decentralized incident reporting, hop-by-hop store-and-forward peer relay across field units, and central triage mapping once an uplink is established.
+
+**Live Deployment:** [sahay-relief.onrender.com](https://sahay-1-7fcs.onrender.com)  
+**Backend API:** [sahay-api.onrender.com/api/incidents](https://sahay-f45z.onrender.com)
 
 ---
 
