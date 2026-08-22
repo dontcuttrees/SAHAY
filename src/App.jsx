@@ -21,7 +21,7 @@ function DashboardShell() {
             <Radio className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-bold text-base tracking-tight">RELIEF-MESH</h1>
+            <h1 className="font-bold text-base tracking-tight">SAHAY</h1>
             <p className="text-[10px] text-slate-400 uppercase tracking-widest font-mono">Offline Disaster DTN</p>
           </div>
         </div>
