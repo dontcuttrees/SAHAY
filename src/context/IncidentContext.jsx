@@ -1,6 +1,9 @@
 // src/context/IncidentContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { enqueueIncident } from '../services/storeAndForwardService';
+import {
+  enqueueIncident,
+  processSyncQueue,
+} from '../services/storeAndForwardService';
 
 const IncidentContext = createContext();
 
@@ -111,8 +114,14 @@ export function IncidentProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchIncidents();
-  }, []);
+  fetchIncidents();
+
+  processSyncQueue().then((syncedIds) => {
+    if (syncedIds.length > 0) {
+      fetchIncidents();
+    }
+  });
+}, []);
 
   // Add a new incident
   const addIncident = async (newIncident) => {

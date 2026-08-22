@@ -167,3 +167,77 @@ function wait(milliseconds) {
     setTimeout(resolve, milliseconds);
   });
 }
+let isSyncing = false;
+
+export async function processSyncQueue() {
+  if (isSyncing) {
+    return [];
+  }
+
+  isSyncing = true;
+
+  const synced = [];
+
+  try {
+    const queue = getSyncQueue();
+
+    if (queue.length === 0) {
+      return [];
+    }
+
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+    for (const incident of queue) {
+      try {
+        // 1. Send the locally queued incident to MongoDB
+        const result = await syncIncidentToBackend(incident);
+
+        // Get the actual backend-generated incident ID
+        const backendIncident = result.incident;
+
+        if (!backendIncident?.incidentId) {
+          throw new Error('Backend did not return an incident ID');
+        }
+
+        // 2. Mark the newly synced incident as Synced
+        const statusResponse = await fetch(
+          `${baseUrl}/api/incidents/${backendIncident.incidentId}/status`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              status: 'Synced',
+            }),
+          }
+        );
+
+        if (!statusResponse.ok) {
+          throw new Error(
+            `Status update failed: ${statusResponse.status}`
+          );
+        }
+
+        // 3. Remove it from the local queue
+        removeFromQueue(incident.incidentId);
+
+        synced.push(backendIncident.incidentId);
+
+        console.log(
+          `Incident ${backendIncident.incidentId} synced successfully.`
+        );
+      } catch (error) {
+        console.warn(
+          `Incident ${incident.incidentId} still pending:`,
+          error.message
+        );
+      }
+    }
+
+    return synced;
+  } finally {
+    isSyncing = false;
+  }
+}
