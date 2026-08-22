@@ -1,14 +1,14 @@
-
+// src/components/victim/ReportNeedForm.jsx
 import React, { useState } from 'react';
 import { useIncidents } from '../../context/IncidentContext';
 import { AlertCircle, MapPin, Users, Send } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'Medical', label: 'Medical', icon: '🏥' },
-  { id: 'Water', label: 'Water', icon: '💧' },
-  { id: 'Food', label: 'Food', icon: '🍱' },
-  { id: 'Shelter', label: 'Shelter', icon: '🏠' },
-  { id: 'Missing Person', label: 'Missing Person', icon: '👤' },
+  { id: 'Medical', label: 'Medical' },
+  { id: 'Water', label: 'Water' },
+  { id: 'Food', label: 'Food' },
+  { id: 'Shelter', label: 'Shelter' },
+  { id: 'Missing Person', label: 'Missing Person' },
 ];
 
 const SEVERITIES = [
@@ -73,13 +73,13 @@ export default function ReportNeedForm() {
               type="button"
               key={cat.id}
               onClick={() => setCategory(cat.id)}
-              className={`p-2 rounded-lg border text-xs font-medium flex items-center justify-center gap-1.5 transition ${
+              className={`p-2 rounded-lg border text-xs font-medium text-center transition ${
                 category === cat.id
                   ? 'bg-blue-600 border-blue-400 text-white'
                   : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-slate-500'
               }`}
             >
-              <span>{cat.icon}</span> {cat.label}
+              {cat.label}
             </button>
           ))}
         </div>
@@ -143,7 +143,7 @@ export default function ReportNeedForm() {
           rows="2"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="e.g. 2 elderly persons need oxygen, bridge collapsed near east exit..."
+          placeholder="Specify exact medical needs, structural collapse details, access blockers..."
           className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-blue-500 resize-none"
         />
       </div>
